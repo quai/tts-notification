@@ -32,7 +32,7 @@ Perfect for developers who want to multitask while Claude Code works in the back
 
 1. **Install Python dependencies:**
    ```bash
-   pip install openai
+   pip install -r requirements.txt
    ```
 
 2. **Copy the script to your Claude Code user bin directory:**
