@@ -73,9 +73,80 @@ The script is designed to work with Claude Code hooks:
 - `aplay` (ALSA systems)
 - `ffplay` (FFmpeg)
 
-## Installation Notes
+## Installation and Setup
 
-1. Install the script in your Claude Code user bin directory: `~/.claude/user/bin/`
-2. Ensure OpenAI API key is configured
-3. Install an audio player from the supported list
-4. Configure hooks in your Claude Code settings to use the script
+### Prerequisites Setup
+```bash
+# Install Python dependencies
+pip install openai
+
+# Set OpenAI API key (add to ~/.bashrc or ~/.zshrc for persistence)
+export OPENAI_API_KEY="your-api-key-here"
+
+# Install audio player (choose one based on your system)
+sudo apt install mpg123      # Linux/Ubuntu
+brew install mpg123          # macOS
+sudo dnf install mpg123      # Fedora
+```
+
+### Script Installation
+```bash
+# Copy script to Claude Code user bin directory
+mkdir -p ~/.claude/user/bin
+cp tts-notification.py ~/.claude/user/bin/
+chmod +x ~/.claude/user/bin/tts-notification.py
+```
+
+### Hook Configuration
+Add to your Claude Code settings file (usually `~/.claude/settings.json`):
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/user/bin/tts-notification.py 'Task completed'"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "*", 
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/user/bin/tts-notification.py 'Claude is waiting'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Script not found:**
+- Verify script is in `~/.claude/user/bin/` and executable
+- Check path in hook configuration matches actual location
+
+**No audio playback:**
+- Install audio player: `mpg123`, `afplay`, `paplay`, `aplay`, or `ffplay`
+- Test audio system: `speaker-test -t sine -f 1000 -l 1` (Linux)
+
+**API errors:**
+- Verify `OPENAI_API_KEY` environment variable: `echo $OPENAI_API_KEY`
+- Check API key has sufficient credits at platform.openai.com
+- Test network connectivity to OpenAI API
+
+**Hook not triggering:**
+- Validate JSON syntax in settings file
+- Check Claude Code settings file location
+- Review hook matcher patterns (use `*` for all files)
+- Restart Claude Code after settings changes
